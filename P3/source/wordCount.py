@@ -1,13 +1,20 @@
+"""
+Count word frequencies in a text file.
+
+This module identifies distinct words and calculates their frequencies
+using basic algorithms without external libraries.
+"""
+
 import sys
 import time
 
 
 def read_words_from_file(filename):
+    """Read words from a file, handling errors gracefully."""
     words = []
-    errors = []
     try:
         with open(filename, 'r', encoding='utf-8') as file:
-            for line_num, line in enumerate(file, 1):
+            for line in file:
                 line = line.strip()
                 if line:
                     parts = line.split()
@@ -18,13 +25,14 @@ def read_words_from_file(filename):
     except FileNotFoundError:
         print(f"Error: File '{filename}' not found.")
         sys.exit(1)
-    except Exception as e:
+    except (IOError, OSError) as e:
         print(f"Error reading file: {e}")
         sys.exit(1)
-    return words, errors
+    return words
 
 
 def count_word_frequencies(words):
+    """Count the frequency of each word in the list."""
     frequency = {}
     for word in words:
         if word in frequency:
@@ -35,6 +43,7 @@ def count_word_frequencies(words):
 
 
 def sort_by_frequency(frequency_dict):
+    """Sort words by frequency in descending order."""
     items = list(frequency_dict.items())
     n = len(items)
     for i in range(n - 1):
@@ -45,13 +54,15 @@ def sort_by_frequency(frequency_dict):
 
 
 def write_results(filename, sorted_words, elapsed_time, total_words):
+    """Write word count results to a file."""
+    distinct_words = len(sorted_words)
     try:
         with open(filename, 'w', encoding='utf-8') as file:
             file.write("=" * 60 + "\n")
             file.write("WORD COUNT RESULTS\n")
             file.write("=" * 60 + "\n\n")
             file.write(f"Total words: {total_words}\n")
-            file.write(f"Distinct words: {len(sorted_words)}\n\n")
+            file.write(f"Distinct words: {distinct_words}\n\n")
             file.write("-" * 60 + "\n")
             file.write("WORD FREQUENCIES\n")
             file.write("-" * 60 + "\n\n")
@@ -62,11 +73,12 @@ def write_results(filename, sorted_words, elapsed_time, total_words):
             file.write("-" * 60 + "\n")
             file.write(f"\nElapsed time:       {elapsed_time:.6f} seconds\n")
             file.write("=" * 60 + "\n")
-    except Exception as e:
+    except (IOError, OSError) as e:
         print(f"Error writing results: {e}")
 
 
 def main():
+    """Main function to count words and display results."""
     if len(sys.argv) != 2:
         print("Usage: python wordCount.py <file_with_data.txt>")
         sys.exit(1)
@@ -76,7 +88,7 @@ def main():
 
     start_time = time.time()
 
-    words, errors = read_words_from_file(filename)
+    words = read_words_from_file(filename)
 
     if not words:
         print("No words found in file.")

@@ -1,8 +1,16 @@
+"""
+Compute descriptive statistics from a file containing numbers.
+
+This module calculates mean, median, mode, variance, and standard
+deviation using basic algorithms without external libraries.
+"""
+
 import sys
 import time
 
 
 def calculate_mean(numbers):
+    """Calculate the arithmetic mean of a list of numbers."""
     total = 0
     for num in numbers:
         total = total + num
@@ -10,16 +18,17 @@ def calculate_mean(numbers):
 
 
 def calculate_median(numbers):
+    """Calculate the median of a list of numbers."""
     sorted_numbers = sorted(numbers)
     n = len(sorted_numbers)
     mid = n // 2
     if n % 2 == 0:
         return (sorted_numbers[mid - 1] + sorted_numbers[mid]) / 2
-    else:
-        return sorted_numbers[mid]
+    return sorted_numbers[mid]
 
 
 def calculate_mode(numbers):
+    """Calculate the mode(s) and their frequency."""
     frequency = {}
     for num in numbers:
         if num in frequency:
@@ -38,6 +47,7 @@ def calculate_mode(numbers):
 
 
 def calculate_sqrt(n):
+    """Calculate square root using Newton's method."""
     if n == 0:
         return 0
     x = n
@@ -50,6 +60,7 @@ def calculate_sqrt(n):
 
 
 def calculate_variance(numbers, mean):
+    """Calculate the population variance of a list of numbers."""
     total = 0
     for num in numbers:
         diff = num - mean
@@ -58,14 +69,16 @@ def calculate_variance(numbers, mean):
 
 
 def calculate_std_dev(variance):
+    """Calculate the population standard deviation."""
     return calculate_sqrt(variance)
 
 
 def read_numbers_from_file(filename):
+    """Read numbers from a file, handling invalid data gracefully."""
     numbers = []
     errors = []
     try:
-        with open(filename, 'r') as file:
+        with open(filename, 'r', encoding='utf-8') as file:
             for line_num, line in enumerate(file, 1):
                 line = line.strip()
                 if line:
@@ -79,15 +92,18 @@ def read_numbers_from_file(filename):
     except FileNotFoundError:
         print(f"Error: File '{filename}' not found.")
         sys.exit(1)
-    except Exception as e:
+    except (IOError, OSError) as e:
         print(f"Error reading file: {e}")
         sys.exit(1)
     return numbers, errors
 
 
-def write_results(filename, stats, elapsed_time, total_items, valid_items, errors):
+def write_results(filename, stats, elapsed_time, items_info, errors):
+    """Write statistics results to a file."""
+    total_items = items_info['total']
+    valid_items = items_info['valid']
     try:
-        with open(filename, 'w') as file:
+        with open(filename, 'w', encoding='utf-8') as file:
             file.write("=" * 50 + "\n")
             file.write("STATISTICS RESULTS\n")
             file.write("=" * 50 + "\n\n")
@@ -109,11 +125,12 @@ def write_results(filename, stats, elapsed_time, total_items, valid_items, error
             file.write("\n" + "-" * 50 + "\n")
             file.write(f"Elapsed time:       {elapsed_time:.6f} seconds\n")
             file.write("=" * 50 + "\n")
-    except Exception as e:
+    except (IOError, OSError) as e:
         print(f"Error writing results: {e}")
 
 
 def main():
+    """Main function to compute and display statistics."""
     if len(sys.argv) != 2:
         print("Usage: python computeStatistics.py <file_with_data.txt>")
         sys.exit(1)
@@ -146,11 +163,16 @@ def main():
         'std_dev': std_dev
     }
 
+    items_info = {
+        'total': len(numbers) + len(errors),
+        'valid': len(numbers)
+    }
+
     print("\n" + "=" * 50)
     print("STATISTICS RESULTS")
     print("=" * 50)
-    print(f"\nTotal items in file: {len(numbers) + len(errors)}")
-    print(f"Valid items: {len(numbers)}")
+    print(f"\nTotal items in file: {items_info['total']}")
+    print(f"Valid items: {items_info['valid']}")
     print(f"Invalid items: {len(errors)}")
     print("\n" + "-" * 50)
     print("DESCRIPTIVE STATISTICS")
@@ -168,7 +190,7 @@ def main():
     print(f"Elapsed time:       {elapsed_time:.6f} seconds")
     print("=" * 50)
 
-    write_results(output_filename, stats, elapsed_time, len(numbers) + len(errors), len(numbers), errors)
+    write_results(output_filename, stats, elapsed_time, items_info, errors)
 
 
 if __name__ == "__main__":

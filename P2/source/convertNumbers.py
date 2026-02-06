@@ -1,8 +1,16 @@
+"""
+Convert numbers to binary and hexadecimal representations.
+
+This module provides manual conversion algorithms without using
+built-in conversion functions.
+"""
+
 import sys
 import time
 
 
 def int_to_binary(n):
+    """Convert an integer to its binary representation."""
     if n == 0:
         return "0"
     is_negative = n < 0
@@ -20,6 +28,7 @@ def int_to_binary(n):
 
 
 def int_to_hexadecimal(n):
+    """Convert an integer to its hexadecimal representation."""
     hex_chars = "0123456789ABCDEF"
     if n == 0:
         return "0"
@@ -38,10 +47,11 @@ def int_to_hexadecimal(n):
 
 
 def read_numbers_from_file(filename):
+    """Read numbers from a file, handling invalid data gracefully."""
     numbers = []
     errors = []
     try:
-        with open(filename, 'r') as file:
+        with open(filename, 'r', encoding='utf-8') as file:
             for line_num, line in enumerate(file, 1):
                 line = line.strip()
                 if line:
@@ -55,15 +65,18 @@ def read_numbers_from_file(filename):
     except FileNotFoundError:
         print(f"Error: File '{filename}' not found.")
         sys.exit(1)
-    except Exception as e:
+    except (IOError, OSError) as e:
         print(f"Error reading file: {e}")
         sys.exit(1)
     return numbers, errors
 
 
-def write_results(filename, conversions, elapsed_time, total_items, valid_items, errors):
+def write_results(filename, conversions, elapsed_time, items_info, errors):
+    """Write conversion results to a file."""
+    total_items = items_info['total']
+    valid_items = items_info['valid']
     try:
-        with open(filename, 'w') as file:
+        with open(filename, 'w', encoding='utf-8') as file:
             file.write("=" * 60 + "\n")
             file.write("CONVERSION RESULTS\n")
             file.write("=" * 60 + "\n\n")
@@ -80,11 +93,12 @@ def write_results(filename, conversions, elapsed_time, total_items, valid_items,
             file.write("-" * 60 + "\n")
             file.write(f"\nElapsed time:       {elapsed_time:.6f} seconds\n")
             file.write("=" * 60 + "\n")
-    except Exception as e:
+    except (IOError, OSError) as e:
         print(f"Error writing results: {e}")
 
 
 def main():
+    """Main function to convert numbers and display results."""
     if len(sys.argv) != 2:
         print("Usage: python convertNumbers.py <file_with_data.txt>")
         sys.exit(1)
@@ -108,11 +122,16 @@ def main():
 
     elapsed_time = time.time() - start_time
 
+    items_info = {
+        'total': len(numbers) + len(errors),
+        'valid': len(numbers)
+    }
+
     print("\n" + "=" * 60)
     print("CONVERSION RESULTS")
     print("=" * 60)
-    print(f"\nTotal items in file: {len(numbers) + len(errors)}")
-    print(f"Valid items: {len(numbers)}")
+    print(f"\nTotal items in file: {items_info['total']}")
+    print(f"Valid items: {items_info['valid']}")
     print(f"Invalid items: {len(errors)}")
     print("\n" + "-" * 60)
     print("CONVERSIONS")
@@ -125,7 +144,9 @@ def main():
     print(f"\nElapsed time:       {elapsed_time:.6f} seconds")
     print("=" * 60)
 
-    write_results(output_filename, conversions, elapsed_time, len(numbers) + len(errors), len(numbers), errors)
+    write_results(
+        output_filename, conversions, elapsed_time, items_info, errors
+    )
 
 
 if __name__ == "__main__":
