@@ -17,9 +17,20 @@ def calculate_mean(numbers):
     return total / len(numbers)
 
 
+def manual_sort(numbers):
+    """Sort a list of numbers using bubble sort algorithm."""
+    result = numbers.copy()
+    n = len(result)
+    for i in range(n - 1):
+        for j in range(n - i - 1):
+            if result[j] > result[j + 1]:
+                result[j], result[j + 1] = result[j + 1], result[j]
+    return result
+
+
 def calculate_median(numbers):
     """Calculate the median of a list of numbers."""
-    sorted_numbers = sorted(numbers)
+    sorted_numbers = manual_sort(numbers)
     n = len(sorted_numbers)
     mid = n // 2
     if n % 2 == 0:
