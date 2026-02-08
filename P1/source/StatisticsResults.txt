@@ -2,21 +2,21 @@
 STATISTICS RESULTS
 ==================================================
 
-Total items in file: 22
-Valid items: 19
-Invalid items: 3
+Total items in file: 400
+Valid items: 400
+Invalid items: 0
 
 --------------------------------------------------
 DESCRIPTIVE STATISTICS
 --------------------------------------------------
 
-Mean:               32.921053
-Median:             25.500000
-Mode:               [10.0, 15.0, 20.0, 25.0, 30.0, 50.0]
-Mode Frequency:     2
-Variance:           529.375346
-Std Deviation:      23.008158
+Mean:               242.320000
+Median:             239.500000
+Mode:               [393.0, 170.0]
+Mode Frequency:     5
+Variance:           21099.917600
+Std Deviation:      145.258107
 
 --------------------------------------------------
-Elapsed time:       0.000202 seconds
+Elapsed time:       0.004146 seconds
 ==================================================
